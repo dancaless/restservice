@@ -6,8 +6,9 @@ const initialState = {
     totalPrice: 0
 }
 
-
 const reducer = (state = initialState, action) => {
+    console.log(state);
+
     switch (action.type) {
         case 'MENU_LOADED':
             return {
@@ -27,18 +28,21 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 menu: state.menu,
+                loading: false,
                 error: true
             };
+
         case 'ITEM_ADD_TO_CART':
             const id = action.payload;
 
             const itemInd = state.items.findIndex(item => item.id === id);
             if (itemInd >= 0) {
-                const itemInState = state.items.find(item => item.id === id);
+                const itemInState = state.items.find(item => item.id === id)
                 const newItem = {
                     ...itemInState,
                     qtty: ++itemInState.qtty
                 }
+
                 return {
                     ...state,
                     items: [
@@ -50,7 +54,9 @@ const reducer = (state = initialState, action) => {
                 }
 
             }
-            // товара раньше не было в корзине
+
+
+
             const item = state.menu.find(item => item.id === id);
             const newItem = {
                 title: item.title,
@@ -59,7 +65,6 @@ const reducer = (state = initialState, action) => {
                 id: item.id,
                 qtty: 1
             };
-
             return {
                 ...state,
                 items: [
@@ -68,19 +73,19 @@ const reducer = (state = initialState, action) => {
                 ],
                 totalPrice: state.totalPrice + newItem.price
             };
-
         case 'ITEM_REMOVE_FROM_CART':
             const idx = action.payload;
             const itemIndex = state.items.findIndex(item => item.id === idx)
-            const price = state.items[itemIndex]['price'] * state.items[itemIndex]['qtty'];
+
             return {
                 ...state,
                 items: [
                     ...state.items.slice(0, itemIndex),
                     ...state.items.slice(itemIndex + 1)
-                ],
-                totalPrice: state.totalPrice - price
+                ]
             }
+
+
         default:
             return state;
     }

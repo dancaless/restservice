@@ -9,13 +9,14 @@ import Error from '../error';
 import './menu-list.scss';
 
 class MenuList extends Component {
+
     componentDidMount() {
         this.props.menuRequested();
 
         const { RestoService } = this.props;
         RestoService.getMenuItems()
             .then(res => this.props.menuLoaded(res))
-            .catch(error => this.props.menuError());
+            .catch(() => this.props.menuError());
     }
 
     render() {
@@ -26,15 +27,13 @@ class MenuList extends Component {
         if (loading) {
             return <Spinner />
         }
-
         const items = menuItems.map(menuItem => {
-            return <MenuListItem
+            return (<MenuListItem
                 key={menuItem.id}
                 menuItem={menuItem}
                 onAddToCart={() => addedToCart(menuItem.id)} />
+            )
         })
-
-        console.log('render:', items);
 
         return (
             <View items={items} />
@@ -47,27 +46,20 @@ const mapStateToProps = (state) => {
         menuItems: state.menu,
         loading: state.loading,
         error: state.error
-
     }
 }
 
+
 const mapDispatchToProps = {
-    menuLoaded,
+    menuLoaded: menuLoaded,
     menuRequested,
     menuError,
     addedToCart
-};
+}
 
 
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         menuLoaded: (newMenu) => {
-//             dispatch(menuLoaded(newMenu))
-
-//         }
-//     }
-// };
 const View = ({ items }) => {
+
     return (
         <ul className="menu__list">
             {items}
@@ -75,7 +67,4 @@ const View = ({ items }) => {
     )
 }
 
-
 export default WithRestoService()(connect(mapStateToProps, mapDispatchToProps)(MenuList));
-// функция mapStateToProps возвращает из стора редакса menu в виде menuItems
-// и передаёт menuItems уже в качестве пропса компоненту MenuList
